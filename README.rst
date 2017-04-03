@@ -1,10 +1,10 @@
-.. _examples-1D0DVisibleHuman:
+.. _examples-Coupled1D0D Vascular Network:
 
 ===========================================================
-Fluid Mechanics: Navier-Stokes: 1D-0D Visible Human Example
+Fluid Mechanics: Navier-Stokes: 1D-0D Vascular Network Example
 ===========================================================
 
-.. sectionauthor:: David Ladd
+.. sectionauthor:: Soroush Safaei
 
 .. _OpenCMISS: http://www.opencmiss.org
 

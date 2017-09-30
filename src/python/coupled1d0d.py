@@ -107,10 +107,10 @@ versionIdx = 1
 
 # Set the flags
 Heart               = False   # Set to use coupled 0D Windkessel models (from CellML) at model inlet boundaries
-HeartInput          = True
-RCRBoundaries       = True   # Set to use coupled 0D Windkessel models (from CellML) at model outlet boundaries
+HeartInput          = False
+RCRBoundaries       = False   # Set to use coupled 0D Windkessel models (from CellML) at model outlet boundaries
 nonReflecting       = False   # Set to use non-reflecting outlet boundaries
-streeBoundaries     = False   # Set to use structured tree outlet boundaries
+streeBoundaries     = True   # Set to use structured tree outlet boundaries
 coupledAdvection    = False   # Set to solve a coupled advection problem
 timestepStability   = False   # Set to do a basic check of the stability of the hyperbolic problem based on the timestep size
 initialiseFromFile  = False   # Set to initialise values
@@ -356,7 +356,7 @@ if (nonReflecting):
 elif (RCRBoundaries):
     OutletBoundaryConditionType = iron.BoundaryConditionsTypes.FIXED_CELLML
 elif (streeBoundaries):
-    OutletBoundaryConditionType = iron.BoundaryConditionsTypes.FixedStree
+    OutletBoundaryConditionType = iron.BoundaryConditionsTypes.FIXED_STREE
 else:
     OutletBoundaryConditionType = iron.BoundaryConditionsTypes.FIXED_OUTLET
 
@@ -369,11 +369,11 @@ LINEAR_SOLVER_CHARACTERISTIC_OUTPUT_TYPE    = iron.SolverOutputTypes.NONE
 LINEAR_SOLVER_NAVIER_STOKES_OUTPUT_TYPE     = iron.SolverOutputTypes.NONE
 # (NONE/TIMING/SOLVER/MATRIX)
 CMISS_SOLVER_OUTPUT_TYPE = iron.SolverOutputTypes.NONE
-DYNAMIC_SOLVER_NAVIER_STOKES_OUTPUT_FREQUENCY = 10
+DYNAMIC_SOLVER_NAVIER_STOKES_OUTPUT_FREQUENCY = 1
 
 # Set the time parameters
 numberOfPeriods = 1.0
-timePeriod      = 1000.0
+timePeriod      = 1000
 timeIncrement   = 0.1
 startTime       = 0.0
 stopTime  = numberOfPeriods*timePeriod
@@ -405,17 +405,17 @@ couplingTolerance1D0D = 0.001
 if (RCRBoundaries or Heart):
     if (coupledAdvection):
         # Navier-Stokes solver
-        EquationsSetSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_COUPLED1D0D_ADV_NAVIER_STOKES
+        EquationsSetSubtype = iron.EquationsSetSubtypes.COUPLED1D0D_ADV_NAVIER_STOKES
         # Characteristic solver
-        EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_CHARACTERISTIC
+        EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CHARACTERISTIC
         # Advection solver
-        EquationsSetAdvectionSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_ADVECTION
+        EquationsSetAdvectionSubtype = iron.EquationsSetSubtypes.ADVECTION
         ProblemSubtype = iron.ProblemSubtypes.COUPLED1D0D_ADV_NAVIER_STOKES
     else:
         # Navier-Stokes solver
-        EquationsSetSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_COUPLED1D0D_NAVIER_STOKES
+        EquationsSetSubtype = iron.EquationsSetSubtypes.COUPLED1D0D_NAVIER_STOKES
         # Characteristic solver
-        EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_CHARACTERISTIC
+        EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CHARACTERISTIC
         ProblemSubtype = iron.ProblemSubtypes.COUPLED1D0D_NAVIER_STOKES
 elif (streeBoundaries):
     if (coupledAdvection):
@@ -427,15 +427,15 @@ elif (streeBoundaries):
         EquationsSetStreeSubtype = iron.EquationsSetSubtypes.STREE1D0D_ADV
         # Advection solver
         EquationsSetAdvectionSubtype = iron.EquationsSetSubtypes.ADVECTION
-        ProblemSubtype = iron.ProblemSubtypes.Stree1D0DAdv_NAVIER_STOKES
+        ProblemSubtype = iron.ProblemSubtypes.STREE1D0DAdv_NAVIER_STOKES
     else:
         # Navier-Stokes solver
-        EquationsSetSubtype = iron.EquationsSetSubtypes.Coupled1D0D_NAVIER_STOKES
+        EquationsSetSubtype = iron.EquationsSetSubtypes.COUPLED1D0D_NAVIER_STOKES
         # Characteristic solver
         EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CHARACTERISTIC
         # Stree solver
         EquationsSetStreeSubtype = iron.EquationsSetSubtypes.STREE1D0D
-        ProblemSubtype = iron.ProblemSubtypes.Stree1D0D_NAVIER_STOKES
+        ProblemSubtype = iron.ProblemSubtypes.STREE1D0D
 else:
     if (coupledAdvection):
         # Navier-Stokes solver
@@ -447,9 +447,9 @@ else:
         ProblemSubtype = iron.ProblemSubtypes.TRANSIENT1D_ADV_NAVIER_STOKES
     else:
         # Navier-Stokes solver
-        EquationsSetSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_TRANSIENT1D_NAVIER_STOKES
+        EquationsSetSubtype = iron.EquationsSetSubtypes.TRANSIENT1D_NAVIER_STOKES
         # Characteristic solver
-        EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CMFE_EQUATIONS_SET_CHARACTERISTIC
+        EquationsSetCharacteristicSubtype = iron.EquationsSetSubtypes.CHARACTERISTIC
         ProblemSubtype = iron.ProblemSubtypes.TRANSIENT1D_NAVIER_STOKES
 
 #================================================================================================================================
@@ -731,10 +731,12 @@ if (ProgressDiagnostics):
 if (streeBoundaries):
     EquationsSetStree = iron.EquationsSet()
     EquationsSetFieldStree = iron.Field()
+    StreeEquationsSetSpecification = [iron.EquationsSetClasses.FLUID_MECHANICS,
+    					iron.EquationsSetTypes.STREE_EQUATION,
+    					EquationsSetStreeSubtype]
     # Set the equations set to be a dynamic linear problem
     EquationsSetStree.CreateStart(EquationsSetUserNumberStree,RegionStree,GeometricFieldTime,
-        iron.EquationsSetClasses.FLUID_MECHANICS,iron.EquationsSetTypes.STREE_EQUATION,
-         EquationsSetStreeSubtype,EquationsSetFieldUserNumberStree,EquationsSetFieldStree)
+        StreeEquationsSetSpecification,EquationsSetFieldUserNumberStree,EquationsSetFieldStree)
     EquationsSetStree.CreateFinish()
 
 #------------------
@@ -940,8 +942,8 @@ MaterialsFieldNavierStokes.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U
  iron.FieldParameterSetTypes.VALUES,MaterialsFieldUserNumberMs,Ms)
 MaterialsFieldNavierStokes.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,
  iron.FieldParameterSetTypes.VALUES,MaterialsFieldUserNumberG0,G0)
-MaterialsFieldNavierStokes.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,
- iron.FieldParameterSetTypes.VALUES,MaterialsFieldUserNumberFr,Fr)
+#MaterialsFieldNavierStokes.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,
+# iron.FieldParameterSetTypes.VALUES,MaterialsFieldUserNumberFr,Fr)
 
 # Initialise the materials field variables (A0,E,H,kp,k1,k2,k3,b1)
 bifIdx = 0
@@ -962,16 +964,16 @@ for nodeIdx in range(1,numberOfNodesSpace+1,1):
              versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberE,E[nodeIdx][versionIdx-1])
             MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
              versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberH,H[nodeIdx][versionIdx-1])
-            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
-             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberkp,kp[nodeIdx][versionIdx-1])
-            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
-             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberk1,k1[nodeIdx][versionIdx-1])
-            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
-             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberk2,k2[nodeIdx][versionIdx-1])
-            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
-             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberk3,k3[nodeIdx][versionIdx-1])
-            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
-             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberb1,b1[nodeIdx][versionIdx-1])
+#            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
+#             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberkp,kp[nodeIdx][versionIdx-1])
+#            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
+#             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberk1,k1[nodeIdx][versionIdx-1])
+#            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
+#             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberk2,k2[nodeIdx][versionIdx-1])
+#            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
+#             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberk3,k3[nodeIdx][versionIdx-1])
+#            MaterialsFieldNavierStokes.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES,
+#             versionIdx,derivIdx,nodeIdx,MaterialsFieldUserNumberb1,b1[nodeIdx][versionIdx-1])
 
 # Finish the parameter update
 MaterialsFieldNavierStokes.ParameterSetUpdateStart(iron.FieldVariableTypes.V,iron.FieldParameterSetTypes.VALUES)

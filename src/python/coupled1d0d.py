@@ -110,7 +110,7 @@ Heart               = False   # Set to use coupled 0D Windkessel models (from Ce
 HeartInput          = False
 RCRBoundaries       = False   # Set to use coupled 0D Windkessel models (from CellML) at model outlet boundaries
 nonReflecting       = False   # Set to use non-reflecting outlet boundaries
-streeBoundaries     = True   # Set to use structured tree outlet boundaries
+streeBoundaries     = False   # Set to use structured tree outlet boundaries
 coupledAdvection    = False   # Set to solve a coupled advection problem
 timestepStability   = False   # Set to do a basic check of the stability of the hyperbolic problem based on the timestep size
 initialiseFromFile  = False   # Set to initialise values
@@ -373,7 +373,7 @@ DYNAMIC_SOLVER_NAVIER_STOKES_OUTPUT_FREQUENCY = 1
 
 # Set the time parameters
 numberOfPeriods = 1.0
-timePeriod      = 1000
+timePeriod      = 0.1
 timeIncrement   = 0.1
 startTime       = 0.0
 stopTime  = numberOfPeriods*timePeriod
@@ -1106,7 +1106,7 @@ if (HeartInput):
     AnalyticFieldNavierStokes.VariableLabelSet(iron.FieldVariableTypes.U,'Input Flow')
     EquationsSetNavierStokes.AnalyticCreateFinish()
 else:
-    Q[1][0]=10.0
+    Q[1][0]=0.0
 
 #DOC-START cellml define field maps
 #================================================================================================================================
@@ -1424,7 +1424,7 @@ Problem.ControlLoopGet([iron.ControlLoopIdentifiers.NODE],TimeLoop)
 TimeLoop.LabelSet('Time Loop')
 TimeLoop.TimesSet(startTime,stopTime,timeIncrement)
 TimeLoop.TimeOutputSet(DYNAMIC_SOLVER_NAVIER_STOKES_OUTPUT_FREQUENCY)
-TimeLoop.OutputTypeSet(iron.ControlLoopOutputTypes.NONE)
+TimeLoop.OutputTypeSet(iron.ControlLoopOutputTypes.TIMING)
 
 # Set tolerances for iterative convergence loops
 if (RCRBoundaries or streeBoundaries or Heart):
@@ -1438,8 +1438,7 @@ if (RCRBoundaries or streeBoundaries or Heart):
     Iterative1D0DCouplingLoop.AbsoluteToleranceSet(couplingTolerance1D0D)
 else:
     Iterative1DCouplingLoop = iron.ControlLoop()
-    Problem.ControlLoopGet([Iterative1dControlLoopNumber,iron.ControlLoopIdentifiers.NODE],
-     Iterative1DCouplingLoop)
+    Problem.ControlLoopGet([Iterative1dControlLoopNumber,iron.ControlLoopIdentifiers.NODE],Iterative1DCouplingLoop)
     Iterative1DCouplingLoop.AbsoluteToleranceSet(couplingTolerance1D)
 
 Problem.ControlLoopCreateFinish()

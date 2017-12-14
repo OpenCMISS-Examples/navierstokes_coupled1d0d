@@ -1,4 +1,4 @@
-#================================================================================================================================
+/input#================================================================================================================================
 #  Start Program
 #================================================================================================================================
 
@@ -124,7 +124,7 @@ if (ProgressDiagnostics):
     print " == >> Reading geometry from files... << == "
 
 # Read the node file
-with open('Input/Node.csv','rb') as csvfile:
+with open('input/Node.csv','rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rownum = 0
     for row in reader:
@@ -210,7 +210,7 @@ with open('Input/Node.csv','rb') as csvfile:
 #------------------
 
 # Read the element file
-with open('Input/Element.csv','rb') as csvfile:
+with open('input/Element.csv','rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rownum = 0
     i = 0
@@ -343,7 +343,7 @@ A = A0
 # Or initialise from init file
 if (initialiseFromFile):
     init = numpy.zeros([numberOfNodesSpace+1,4,4])
-    init = numpy.load('./Input/init.npy')
+    init = numpy.load('./input/init.npy')
     Q [1:numberOfNodesSpace+1,:] = init[:,0,:]
     A [1:numberOfNodesSpace+1,:] = init[:,1,:]
     dQ[1:numberOfNodesSpace+1,:] = init[:,2,:]
@@ -1143,9 +1143,9 @@ if (RCRBoundaries):
     for terminalIdx in range (1,numberOfTerminalNodes+1):
         nodeIdx = coupledNodeNumber[terminalIdx-1]
         nodeDomain = Decomposition.NodeDomainGet(nodeIdx,meshComponentNumberSpace)
-        print('reading model: ' + "./Input/CellMLModels/outlet/"+str(segment[nodeIdx])+"/ModelRCR.cellml")
+        print('reading model: ' + "./input/CellMLModels/outlet/"+str(segment[nodeIdx])+"/ModelRCR.cellml")
         if (nodeDomain == computationalNodeNumber):
-            CellMLModelIndex[terminalIdx] = CellML.ModelImport("./Input/CellMLModels/outlet/"+str(segment[nodeIdx])+"/ModelRCR.cellml")
+            CellMLModelIndex[terminalIdx] = CellML.ModelImport("./input/CellMLModels/outlet/"+str(segment[nodeIdx])+"/ModelRCR.cellml")
             # known (to OpenCMISS) variables
             CellML.VariableSetAsKnown(CellMLModelIndex[terminalIdx],"Circuit/Qin")
             # to get from the CellML side
@@ -1233,9 +1233,9 @@ if (Heart):
     for inputIdx in range (1,numberOfInputNodes+1):
         nodeIdx = inputNodeNumber[inputIdx-1]
         nodeDomain = Decomposition.NodeDomainGet(nodeIdx,meshComponentNumberSpace)
-        print('reading model: ' + "./Input/CellMLModels/inlet/"+str(segment[nodeIdx])+"/Heart.cellml")
+        print('reading model: ' + "./input/CellMLModels/inlet/"+str(segment[nodeIdx])+"/Heart.cellml")
         if (nodeDomain == computationalNodeNumber):
-            CellMLModelIndex[inputIdx] = CellML.ModelImport("./Input/CellMLModels/inlet/"+str(segment[nodeIdx])+"/Heart.cellml")
+            CellMLModelIndex[inputIdx] = CellML.ModelImport("./input/CellMLModels/inlet/"+str(segment[nodeIdx])+"/Heart.cellml")
             # known (to OpenCMISS) variables
             CellML.VariableSetAsKnown(CellMLModelIndex[inputIdx],"Heart/P_art")
             # to get from the CellML side
@@ -1807,7 +1807,7 @@ if (streeBoundaries):
     # Loop through the terminal nodes
     for terminalIdx in range (1,numberOfTerminalNodes+1):
         # Read the organ node file
-        with open('Input/stree/'+str(terminalIdx)+'.csv','rb') as csvfile:
+        with open('input/stree/'+str(terminalIdx)+'.csv','rb') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             rownum = 0
             for row in reader:

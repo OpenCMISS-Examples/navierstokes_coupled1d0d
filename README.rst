@@ -86,7 +86,7 @@ The expected results from this example are available in `expected_results <./src
 Prerequisites
 =============
 
-There are two files describing the vasular system mesh in the input folder. Also all the terminal models are located in this folder.
+There are two files describing the vascular system mesh in the input folder. Also all the terminal models are located in this folder.
 
 License
 =======

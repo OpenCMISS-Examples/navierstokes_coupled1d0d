@@ -59,9 +59,9 @@ Running the example
 
 Python version::
 
-  source /path/to/opencmisslibs/install/virtaul_environments/oclibs_venv_pyXY_release/bin/activate
-  cd ./navierstokes_coupled1d0d/src/python
-  python src/python/Coupled1D0D.py
+  source <path-to-opencmiss>/install/virtaul_environments/oclibs_venv_pyXY_release/bin/activate
+  cd ./src/python
+  python Coupled1D0D.py
 
 
 Results
@@ -86,7 +86,7 @@ The expected results from this example are available in `expected_results <./src
 Prerequisites
 =============
 
-There are no additional input files required for this example as it is self-contained.
+There are two files describing the vasular system mesh in the input folder. Also all the terminal models are located in this folder.
 
 License
 =======

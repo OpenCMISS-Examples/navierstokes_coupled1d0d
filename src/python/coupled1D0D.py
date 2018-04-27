@@ -75,14 +75,19 @@ from scipy.linalg  import inv,eig
 from scipy.special import jn
 from opencmiss.iron import iron
 
+worldRegion = iron.Region()
+iron.Context.WorldRegionGet(worldRegion)
+
 # Diagnostics
 #iron.DiagnosticsSetOn(iron.DiagnosticTypes.ALL,[1,2,3,4,5],"Diagnostics",[""])
 #iron.ErrorHandlingModeSet(iron.ErrorHandlingModes.TRAP_ERROR)
 #iron.OutputSetOn("Testing")
 
 # Get the computational nodes info
-numberOfComputationalNodes = iron.ComputationalNumberOfNodesGet()
-computationalNodeNumber    = iron.ComputationalNodeNumberGet()
+computationEnvironment = iron.ComputationEnvironment()
+iron.Context.ComputationEnvironmentGet(computationEnvironment)
+numberOfComputationalNodes = computationEnvironment.NumberOfWorldNodesGet()
+computationalNodeNumber = computationEnvironment.WorldNodeNumberGet()
 
 #================================================================================================================================
 #  Problem Control Panel
@@ -461,7 +466,7 @@ if (ProgressDiagnostics):
 
 # Start the creation of RC coordinate system
 CoordinateSystem = iron.CoordinateSystem()
-CoordinateSystem.CreateStart(CoordinateSystemUserNumber)
+CoordinateSystem.CreateStart(CoordinateSystemUserNumber,iron.Context)
 CoordinateSystem.DimensionSet(3)
 CoordinateSystem.CreateFinish()
 
@@ -474,7 +479,7 @@ if (ProgressDiagnostics):
 
 # Start the creation of SPACE region
 Region = iron.Region()
-Region.CreateStart(RegionUserNumber,iron.WorldRegion)
+Region.CreateStart(RegionUserNumber,worldRegion)
 Region.label = "ArterialSystem"
 Region.coordinateSystem = CoordinateSystem
 Region.CreateFinish()
@@ -482,7 +487,7 @@ Region.CreateFinish()
 if (streeBoundaries):
     # Start the creation of TIME region
     RegionStree = iron.Region()
-    RegionStree.CreateStart(RegionUserNumber2,iron.WorldRegion)
+    RegionStree.CreateStart(RegionUserNumber2,worldRegion)
     RegionStree.label = "StructuredTree"
     RegionStree.coordinateSystem = CoordinateSystem
     RegionStree.CreateFinish()
@@ -497,7 +502,7 @@ if (ProgressDiagnostics):
 # Start the creation of SPACE bases
 basisXiGaussSpace = 3
 BasisSpace = iron.Basis()
-BasisSpace.CreateStart(BasisUserNumberSpace)
+BasisSpace.CreateStart(BasisUserNumberSpace,iron.Context)
 BasisSpace.type = iron.BasisTypes.LAGRANGE_HERMITE_TP
 BasisSpace.numberOfXi = numberOfDimensions
 BasisSpace.interpolationXi = [iron.BasisInterpolationSpecifications.QUADRATIC_LAGRANGE]
@@ -508,7 +513,7 @@ if (streeBoundaries):
     # Start the creation of TIME bases
     basisXiGaussSpace = 3
     BasisTime = iron.Basis()
-    BasisTime.CreateStart(BasisUserNumberTime)
+    BasisTime.CreateStart(BasisUserNumberTime,iron.Context)
     BasisTime.type = iron.BasisTypes.LAGRANGE_HERMITE_TP
     BasisTime.numberOfXi = numberOfDimensions
     BasisTime.interpolationXi = [iron.BasisInterpolationSpecifications.LINEAR_LAGRANGE]
@@ -1352,7 +1357,7 @@ Problem = iron.Problem()
 ProblemSpecification = [iron.ProblemClasses.FLUID_MECHANICS,
                         iron.ProblemTypes.NAVIER_STOKES_EQUATION,
                         ProblemSubtype]
-Problem.CreateStart(ProblemUserNumber,ProblemSpecification)
+Problem.CreateStart(ProblemUserNumber,iron.Context,ProblemSpecification)
 Problem.CreateFinish()
 
 #================================================================================================================================

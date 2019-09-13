@@ -121,7 +121,7 @@ ProgressDiagnostics = False   # Set to diagnostics
 #================================================================================================================================
 
 if (ProgressDiagnostics):
-    print " == >> Reading geometry from files... << == "
+    print( " == >> Reading geometry from files... << == ")
 
 # Read the node file
 with open('input/Node.csv','rb') as csvfile:

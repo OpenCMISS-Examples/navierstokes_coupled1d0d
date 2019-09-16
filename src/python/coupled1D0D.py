@@ -80,6 +80,8 @@ from opencmiss.iron import iron
 #iron.ErrorHandlingModeSet(iron.ErrorHandlingModes.TRAP_ERROR)
 #iron.OutputSetOn("Testing")
 
+path=os.path.dirname(os.path.abspath(__file__))
+
 # Get the computational nodes info
 numberOfComputationalNodes = iron.ComputationalNumberOfNodesGet()
 computationalNodeNumber    = iron.ComputationalNodeNumberGet()
@@ -124,7 +126,7 @@ if (ProgressDiagnostics):
     print( " == >> Reading geometry from files... << == ")
 
 # Read the node file
-with open('input/Node.csv','rb') as csvfile:
+with open(os.path.join(path,'input/Node.csv'),'rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rownum = 0
     for row in reader:
@@ -210,7 +212,7 @@ with open('input/Node.csv','rb') as csvfile:
 #------------------
 
 # Read the element file
-with open('input/Element.csv','rb') as csvfile:
+with open(os.path.join(path,'input/Element.csv'),'rb') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rownum = 0
     i = 0

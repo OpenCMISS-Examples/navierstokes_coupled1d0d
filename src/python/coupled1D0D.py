@@ -126,7 +126,7 @@ if (ProgressDiagnostics):
     print( " == >> Reading geometry from files... << == ")
 
 # Read the node file
-with open(os.path.join(path,'input/Node.csv'),'rb') as csvfile:
+with open(os.path.join(path,'input/Node.csv')) as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rownum = 0
     for row in reader:
@@ -345,7 +345,7 @@ A = A0
 # Or initialise from init file
 if (initialiseFromFile):
     init = numpy.zeros([numberOfNodesSpace+1,4,4])
-    init = numpy.load('./input/init.npy')
+    init = numpy.load(os.path.join(path,'input/init.npy'))
     Q [1:numberOfNodesSpace+1,:] = init[:,0,:]
     A [1:numberOfNodesSpace+1,:] = init[:,1,:]
     dQ[1:numberOfNodesSpace+1,:] = init[:,2,:]
@@ -1809,7 +1809,7 @@ if (streeBoundaries):
     # Loop through the terminal nodes
     for terminalIdx in range (1,numberOfTerminalNodes+1):
         # Read the organ node file
-        with open('input/stree/'+str(terminalIdx)+'.csv','rb') as csvfile:
+        with open(os.path.join(path,'input/stree/')+str(terminalIdx)+'.csv') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             rownum = 0
             for row in reader:

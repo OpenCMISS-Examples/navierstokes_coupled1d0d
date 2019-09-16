@@ -212,7 +212,7 @@ with open(os.path.join(path,'input/Node.csv')) as csvfile:
 #------------------
 
 # Read the element file
-with open(os.path.join(path,'input/Element.csv'),'rb') as csvfile:
+with open(os.path.join(path,'input/Element.csv')) as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rownum = 0
     i = 0
